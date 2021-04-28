@@ -55,4 +55,8 @@ public class InMemoryServiceStore implements ServiceStore {
           });
     });
   }
+
+  public void addAll(List<Service> services) {
+    services.forEach(service -> servicesMap.put(service.getId(), service));
+  }
 }

@@ -31,7 +31,7 @@ public class MainVerticleTest {
     var options = new DeploymentOptions()
         .setConfig(new JsonObject()
             .put("http.port", HTTP_PORT)
-            .put("storage.useInMemory", true));
+            .put("storage.useInMemoryOnly", true));
     vertx.deployVerticle(new MainVerticle(), options, testContext.succeedingThenComplete());
   }
 

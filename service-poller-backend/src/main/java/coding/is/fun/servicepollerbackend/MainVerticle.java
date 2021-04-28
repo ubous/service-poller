@@ -1,6 +1,6 @@
 package coding.is.fun.servicepollerbackend;
 
-import coding.is.fun.servicepollerbackend.store.FileSystemServiceStore;
+import coding.is.fun.servicepollerbackend.store.FileSystemAndInMemoryServiceStore;
 import coding.is.fun.servicepollerbackend.store.InMemoryServiceStore;
 import coding.is.fun.servicepollerbackend.store.ServiceStore;
 import io.vertx.core.AbstractVerticle;
@@ -28,13 +28,14 @@ public class MainVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
 
-    var useInMemoryStore = config().getBoolean("storage.useInMemory", false);
+    var useInMemoryStore = config().getBoolean("storage.useInMemoryOnly", false);
+    var inMemoryStore = InMemoryServiceStore.create();
     ServiceStore serviceStore;
     if (useInMemoryStore) {
-      serviceStore = InMemoryServiceStore.create();
+      serviceStore = inMemoryStore;
     } else {
       var fileSystem = vertx.fileSystem();
-      serviceStore = FileSystemServiceStore.create(fileSystem);
+      serviceStore = FileSystemAndInMemoryServiceStore.create(fileSystem, inMemoryStore);
     }
 
     var httpClient = vertx.createHttpClient();
