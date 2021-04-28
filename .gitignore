@@ -4,3 +4,5 @@ service-poller-backend/servicesFile.json
 # IntelliJ
 service-poller-backend/.idea
 service-poller-backend/*.iml
+service-poller-frontend/.idea
+service-poller-frontend/*.iml
