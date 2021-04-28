@@ -15,6 +15,7 @@ import coding.is.fun.servicepollerbackend.store.ServiceNotFoundException;
 import coding.is.fun.servicepollerbackend.store.ServiceStore;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -136,5 +137,22 @@ class RequestHandlerTest {
     // then
     verifyNoMoreInteractions(store);
     verify(routingContext).fail(eq(400), any(IllegalArgumentException.class));
+  }
+
+  @Test
+  void addServiceShouldFailIfTheUrlIsNotAValidUri() {
+    // given
+    var requestBody = "{" +
+                      "\"name\":\"test\"," +
+                      "\"url\":\"not-a-valid-uri\"" +
+                      "}";
+    when(routingContext.getBodyAsJson()).thenReturn(new JsonObject(requestBody));
+
+    // when
+    requestHandler.addService(routingContext);
+
+    // then
+    verifyNoMoreInteractions(store);
+    verify(routingContext).fail(eq(400), any(MalformedURLException.class));
   }
 }

@@ -34,7 +34,7 @@ Responses:
 
 Body: should contain a JSON object with the following fields:
 * `name`
-* `url`
+* `url`: must be a valid URL
 
 Responses:
 * `200`: Service add. Response body contains a JSON with the created service.

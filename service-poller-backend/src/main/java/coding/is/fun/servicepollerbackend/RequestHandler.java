@@ -2,8 +2,9 @@ package coding.is.fun.servicepollerbackend;
 
 import coding.is.fun.servicepollerbackend.model.Service;
 import coding.is.fun.servicepollerbackend.store.ServiceStore;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.RoutingContext;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +53,14 @@ public class RequestHandler {
 
     if (StringUtils.isEmpty(name) || StringUtils.isEmpty(url)) {
       routingContext.fail(HTTP_STATUS_CODE_BAD_REQUEST,
-          new IllegalArgumentException("name and url are required to add a service"));
+          new IllegalArgumentException("name is required to add a service"));
+      return;
+    }
+
+    try {
+      new URL(url);
+    } catch (MalformedURLException ex) {
+      routingContext.fail(HTTP_STATUS_CODE_BAD_REQUEST, ex);
       return;
     }
 
