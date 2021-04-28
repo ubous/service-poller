@@ -1,7 +1,9 @@
 package coding.is.fun.servicepollerbackend.store;
 
 import coding.is.fun.servicepollerbackend.model.Service;
+import coding.is.fun.servicepollerbackend.model.ServiceStatus;
 import io.vertx.core.Future;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,5 +33,18 @@ public class InMemoryServiceStore implements ServiceStore {
   public Future<List<Service>> getAll() {
     var all = new ArrayList<>(servicesMap.values());
     return Future.succeededFuture(all);
+  }
+
+  @Override
+  public Future<Service> updateStatus(UUID serviceId, ServiceStatus status) {
+    return Future.future(handler -> {
+      get(serviceId)
+          .onSuccess(service -> {
+            servicesMap.remove(serviceId);
+            var updatedService = Service.create(service, Instant.now(), status);
+            add(updatedService)
+                .onSuccess(handler::complete);
+          });
+    });
   }
 }

@@ -3,6 +3,7 @@ package coding.is.fun.servicepollerbackend.store;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import coding.is.fun.servicepollerbackend.model.Service;
+import coding.is.fun.servicepollerbackend.model.ServiceStatus;
 import io.vertx.core.CompositeFuture;
 import java.time.Instant;
 import java.util.UUID;
@@ -61,6 +62,27 @@ class InMemoryServiceStoreTest {
           var result = handler.result();
           assertThat(result).hasSize(3);
           assertThat(result).contains(service1, service2, service3);
+        });
+  }
+
+  @Test
+  void shouldUpdateServiceStatusForAServiceThatExists() {
+    // given
+    var id = UUID.randomUUID();
+    var service = Service.create(id, "test", "http://test.org", Instant.now());
+    store.add(service)
+        // when
+        .compose(s -> store.updateStatus(s.getId(), ServiceStatus.OK))
+        .onComplete(handler -> {
+          // then
+          assertThat(handler.succeeded()).isTrue();
+          assertThat(handler.result().getStatus()).isEqualTo(ServiceStatus.OK);
+          assertThat(handler.result().getStatusUpdateTime()).isNotNull();
+
+          assertThat(handler.result().getName()).isEqualTo("test");
+          assertThat(handler.result().getUrl()).isEqualTo("http://test.org");
+          assertThat(handler.result().getStatus()).isNotEqualTo(service.getStatus());
+          assertThat(handler.result().getStatusUpdateTime()).isNotEqualTo(service.getStatusUpdateTime());
         });
   }
 }
