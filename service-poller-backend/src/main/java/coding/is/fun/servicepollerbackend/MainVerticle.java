@@ -18,6 +18,7 @@ public class MainVerticle extends AbstractVerticle {
   public static final int HTTP_PORT = 8888;
 
   private static final Logger LOG = LoggerFactory.getLogger(LoggerHandlerImpl.class);
+  private static final long POLLER_INTERVAL_IN_MILLISECONDS = 10 * 1000;
 
   // curl localhost:8888/api/services | jq .
   // curl -X POST -H "Content-Type: application/json" -d '{ "name": "test1", "url": "http://www.google.com"}'  localhost:8888/api/services
@@ -25,6 +26,8 @@ public class MainVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
     var serviceStore = InMemoryServiceStore.create();
+    var httpClient = vertx.createHttpClient();
+    var servicePoller = ServicePoller.create(serviceStore, httpClient);
     var requestHandler = RequestHandler.create(serviceStore);
     var router = createRouter(vertx, requestHandler);
 
@@ -38,6 +41,8 @@ public class MainVerticle extends AbstractVerticle {
         startPromise.fail(http.cause());
       }
     });
+
+    vertx.setPeriodic(POLLER_INTERVAL_IN_MILLISECONDS, servicePoller::pollAll);
   }
 
   private Router createRouter(Vertx vertx,
