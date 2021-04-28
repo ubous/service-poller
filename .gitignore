@@ -1,0 +1,5 @@
+service-poller-backend/target/
+
+# IntelliJ
+service-poller-backend/.idea
+service-poller-backend/*.iml
