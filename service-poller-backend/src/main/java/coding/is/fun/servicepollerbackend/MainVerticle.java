@@ -69,7 +69,13 @@ public class MainVerticle extends AbstractVerticle {
           ctx.next();
         });
 
-    router.route("/api/*").handler(ResponseContentTypeHandler.create());
+    router.route("/api/*")
+        .handler(ResponseContentTypeHandler.create())
+        .handler(ctx -> {
+          ctx.response().putHeader("Access-Control-Allow-Origin", "*");
+          ctx.response().putHeader("Access-Control-Allow-Methods","GET, POST, OPTIONS");
+          ctx.next();
+        });
 
     router.get("/api/services")
         .produces(CONTENT_TYPE_APPLICATION_JSON)
