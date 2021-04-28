@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class InMemoryServiceStoreTest {
 
-  private final InMemoryServiceStore store = new InMemoryServiceStore();
+  private final InMemoryServiceStore store = InMemoryServiceStore.create();
 
   @Test
   void shouldGetServiceThatWasPreviouslyAdded() {

@@ -14,6 +14,14 @@ public class InMemoryServiceStore implements ServiceStore {
 
   private final Map<UUID, Service> servicesMap = new ConcurrentHashMap<>();
 
+  private InMemoryServiceStore() {
+
+  }
+
+  public static InMemoryServiceStore create() {
+    return new InMemoryServiceStore();
+  }
+
   @Override
   public Future<Service> add(Service service) {
     servicesMap.put(service.getId(), service);

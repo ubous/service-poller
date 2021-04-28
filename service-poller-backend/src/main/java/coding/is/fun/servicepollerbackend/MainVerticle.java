@@ -24,7 +24,7 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) {
-    var serviceStore = new InMemoryServiceStore();
+    var serviceStore = InMemoryServiceStore.create();
     var requestHandler = RequestHandler.create(serviceStore);
     var router = createRouter(vertx, requestHandler);
 
