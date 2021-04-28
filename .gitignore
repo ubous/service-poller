@@ -1,4 +1,5 @@
 service-poller-backend/target/
+service-poller-backend/servicesFile.json
 
 # IntelliJ
 service-poller-backend/.idea

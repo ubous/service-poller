@@ -3,6 +3,7 @@ package coding.is.fun.servicepollerbackend;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vertx.core.CompositeFuture;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
@@ -22,12 +23,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(VertxExtension.class)
 public class MainVerticleTest {
 
-  private final int HTTP_PORT = 8888;
+  private final int HTTP_PORT = 8880;
   private final String HTTP_SERVER = "localhost";
 
   @BeforeEach
   void deployVerticle(Vertx vertx, VertxTestContext testContext) {
-    vertx.deployVerticle(new MainVerticle(), testContext.succeedingThenComplete());
+    var options = new DeploymentOptions()
+        .setConfig(new JsonObject()
+            .put("http.port", HTTP_PORT)
+            .put("storage.useInMemory", true));
+    vertx.deployVerticle(new MainVerticle(), options, testContext.succeedingThenComplete());
   }
 
   @Test

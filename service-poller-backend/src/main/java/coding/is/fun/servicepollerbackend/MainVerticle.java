@@ -1,6 +1,8 @@
 package coding.is.fun.servicepollerbackend;
 
+import coding.is.fun.servicepollerbackend.store.FileSystemServiceStore;
 import coding.is.fun.servicepollerbackend.store.InMemoryServiceStore;
+import coding.is.fun.servicepollerbackend.store.ServiceStore;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -25,7 +27,16 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) {
-    var serviceStore = InMemoryServiceStore.create();
+
+    var useInMemoryStore = config().getBoolean("storage.useInMemory", false);
+    ServiceStore serviceStore;
+    if (useInMemoryStore) {
+      serviceStore = InMemoryServiceStore.create();
+    } else {
+      var fileSystem = vertx.fileSystem();
+      serviceStore = FileSystemServiceStore.create(fileSystem);
+    }
+
     var httpClient = vertx.createHttpClient();
     var servicePoller = ServicePoller.create(serviceStore, httpClient);
     var requestHandler = RequestHandler.create(serviceStore);
@@ -33,7 +44,7 @@ public class MainVerticle extends AbstractVerticle {
 
     var httpServer = vertx.createHttpServer();
     httpServer.requestHandler(router);
-    httpServer.listen(HTTP_PORT, http -> {
+    httpServer.listen(config().getInteger("http.port", HTTP_PORT), http -> {
       if (http.succeeded()) {
         startPromise.complete();
         LOG.info("HTTP server started on port " + HTTP_PORT);

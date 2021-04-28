@@ -12,7 +12,7 @@ public class Service {
   private final Instant statusUpdateTime;
   private final ServiceStatus status;
 
-  private Service(UUID id, String name, String url, Instant creationTime,
+  public Service(UUID id, String name, String url, Instant creationTime,
                   Instant statusUpdateTime,
                   ServiceStatus status) {
     this.id = id;
@@ -24,7 +24,7 @@ public class Service {
   }
 
   public static Service create(UUID id, String name, String url, Instant creationTime) {
-    return new Service(id, name, url, creationTime, null, ServiceStatus.UNKNOWN);
+    return new Service(id, name, url, creationTime, creationTime, ServiceStatus.UNKNOWN);
   }
 
   public static Service create(Service service, Instant statusUpdateTime, ServiceStatus status) {

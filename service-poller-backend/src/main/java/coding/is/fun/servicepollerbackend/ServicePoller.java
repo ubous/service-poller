@@ -64,14 +64,8 @@ public class ServicePoller {
     return Future.future(handler -> httpClient
         .request(HttpMethod.GET, port, url.getHost(), url.getPath())
         .compose(HttpClientRequest::send)
-        .onSuccess(r -> {
-          if (r.statusCode() == 200) {
-            handler.complete(ServiceStatus.OK);
-            return;
-          }
-          handler.complete(ServiceStatus.FAIL);
-        })
-        .onFailure(handler::fail)
+        .onSuccess(r -> handler.complete(ServiceStatus.OK))
+        .onFailure(t -> handler.complete(ServiceStatus.FAIL))
     );
   }
 }
