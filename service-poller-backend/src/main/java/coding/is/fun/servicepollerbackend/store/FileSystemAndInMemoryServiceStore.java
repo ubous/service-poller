@@ -61,6 +61,12 @@ public class FileSystemAndInMemoryServiceStore implements ServiceStore {
         .onSuccess(this::writeAllServicesToFile);
   }
 
+  @Override
+  public Future<Void> delete(UUID id) {
+    return inMemoryStore.delete(id)
+        .onSuccess(ignored -> writeAllServicesToFile());
+  }
+
   private void loadFromFileToInMemoryStore() {
     fileSystem
         .readFile(SERVICES_FILENAME)
@@ -87,11 +93,15 @@ public class FileSystemAndInMemoryServiceStore implements ServiceStore {
     );
   }
 
-  private void writeAllServicesToFile(Service service) {
+  private void writeAllServicesToFile() {
     getAll()
         .onSuccess(services -> {
           var json = Json.encodePrettily(services);
           fileSystem.writeFile(SERVICES_FILENAME, Buffer.buffer(json));
         });
+  }
+
+  private void writeAllServicesToFile(Service service) {
+    writeAllServicesToFile();
   }
 }

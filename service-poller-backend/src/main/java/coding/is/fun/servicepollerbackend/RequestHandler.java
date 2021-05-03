@@ -73,4 +73,16 @@ public class RequestHandler {
   }
 
 
+  public void deleteService(RoutingContext routingContext) {
+    var idParam = routingContext.pathParam("serviceId");
+    try {
+      var id = UUID.fromString(idParam);
+
+      serviceStore.delete(id)
+        .onSuccess(ignored -> routingContext.response().end())
+        .onFailure(routingContext::fail);
+    } catch (IllegalArgumentException ex) {
+      routingContext.fail(HTTP_STATUS_CODE_BAD_REQUEST, ex);
+    }
+  }
 }

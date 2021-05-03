@@ -56,6 +56,16 @@ public class InMemoryServiceStore implements ServiceStore {
     });
   }
 
+  @Override
+  public Future<Void> delete(UUID id) {
+    try {
+      servicesMap.remove(id);
+      return Future.succeededFuture();
+    } catch (Exception e) {
+      return Future.failedFuture(e);
+    }
+  }
+
   public void addAll(List<Service> services) {
     services.forEach(service -> servicesMap.put(service.getId(), service));
   }

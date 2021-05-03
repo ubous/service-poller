@@ -11,4 +11,6 @@ public interface ServiceStore {
   Future<Service> get(UUID id);
   Future<List<Service>> getAll();
   Future<Service> updateStatus(UUID serviceId, ServiceStatus status);
+
+  Future<Void> delete(UUID id);
 }
