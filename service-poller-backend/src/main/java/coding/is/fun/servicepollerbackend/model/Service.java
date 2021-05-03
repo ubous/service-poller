@@ -38,6 +38,17 @@ public class Service {
     );
   }
 
+  public static Service create(Service service, String name, String url) {
+    return new Service(
+        service.getId(),
+        name,
+        url,
+        service.getCreationTime(),
+        service.getStatusUpdateTime(),
+        service.getStatus()
+    );
+  }
+
   public UUID getId() {
     return id;
   }

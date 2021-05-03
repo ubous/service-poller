@@ -68,6 +68,7 @@ public class MainVerticle extends AbstractVerticle {
         .handler(CorsHandler.create("*")
             .allowedMethod(HttpMethod.GET)
             .allowedMethod(HttpMethod.POST)
+            .allowedMethod(HttpMethod.PUT)
             .allowedMethod(HttpMethod.DELETE)
             .allowedMethod(HttpMethod.OPTIONS)
             .allowedHeader("Access-Control-Allow-Origin")
@@ -94,6 +95,9 @@ public class MainVerticle extends AbstractVerticle {
         .produces(CONTENT_TYPE_APPLICATION_JSON)
         .handler(requestHandler::deleteService);
 
+    router.put("/api/services/:serviceId")
+        .produces(CONTENT_TYPE_APPLICATION_JSON)
+        .handler(requestHandler::updateService);
 
     router.post("/api/services")
         .consumes(CONTENT_TYPE_APPLICATION_JSON)

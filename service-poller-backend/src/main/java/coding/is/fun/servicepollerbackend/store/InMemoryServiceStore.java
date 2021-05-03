@@ -66,6 +66,19 @@ public class InMemoryServiceStore implements ServiceStore {
     }
   }
 
+  @Override
+  public Future<Service> updateService(UUID id, String name, String url) {
+    var service = servicesMap.get(id);
+    if (service == null) {
+      return Future.failedFuture("Update failed. Service not found for id " + id);
+    }
+
+    var updatedService = Service.create(service, name, url);
+    servicesMap.put(id, updatedService);
+    return Future.succeededFuture(updatedService);
+
+  }
+
   public void addAll(List<Service> services) {
     services.forEach(service -> servicesMap.put(service.getId(), service));
   }

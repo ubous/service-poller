@@ -67,6 +67,12 @@ public class FileSystemAndInMemoryServiceStore implements ServiceStore {
         .onSuccess(ignored -> writeAllServicesToFile());
   }
 
+  @Override
+  public Future<Service> updateService(UUID id, String name, String url) {
+    return inMemoryStore.updateService(id, name, url)
+        .onSuccess(this::writeAllServicesToFile);
+  }
+
   private void loadFromFileToInMemoryStore() {
     fileSystem
         .readFile(SERVICES_FILENAME)

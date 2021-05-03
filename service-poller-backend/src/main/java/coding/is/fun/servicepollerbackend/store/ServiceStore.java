@@ -13,4 +13,6 @@ public interface ServiceStore {
   Future<Service> updateStatus(UUID serviceId, ServiceStatus status);
 
   Future<Void> delete(UUID id);
+
+  Future<Service> updateService(UUID id, String name, String url);
 }
