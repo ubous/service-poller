@@ -6,10 +6,12 @@ import coding.is.fun.servicepollerbackend.store.ServiceStore;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseContentTypeHandler;
 import io.vertx.ext.web.handler.impl.LoggerHandlerImpl;
@@ -63,6 +65,13 @@ public class MainVerticle extends AbstractVerticle {
 
     router.route()
         .handler(LoggerHandler.create())
+        .handler(CorsHandler.create("*")
+            .allowedMethod(HttpMethod.GET)
+            .allowedMethod(HttpMethod.POST)
+            .allowedMethod(HttpMethod.OPTIONS)
+            .allowedHeader("Access-Control-Allow-Origin")
+            .allowedHeader("Access-Control-Allow-Headers")
+            .allowedHeader("Content-Type"))
         .handler(BodyHandler.create())
         .failureHandler(ctx -> {
           LOG.error(ctx.failure());
@@ -70,12 +79,7 @@ public class MainVerticle extends AbstractVerticle {
         });
 
     router.route("/api/*")
-        .handler(ResponseContentTypeHandler.create())
-        .handler(ctx -> {
-          ctx.response().putHeader("Access-Control-Allow-Origin", "*");
-          ctx.response().putHeader("Access-Control-Allow-Methods","GET, POST, OPTIONS");
-          ctx.next();
-        });
+        .handler(ResponseContentTypeHandler.create());
 
     router.get("/api/services")
         .produces(CONTENT_TYPE_APPLICATION_JSON)
